@@ -1,38 +1,41 @@
-pipeline{
+pipeline {
+  agent any
+  stages {
+    stage('build') {
+      steps {
+        echo 'this is the BUILD job'
+        sh 'npm install'
+      }
+    }
 
-    agent any
+    stage('test') {
+      steps {
+        echo 'this is the TEST job'
+        sh 'npm test'
+      }
+    }
 
-// uncomment the following lines by removing /* and */ to enable
-    tools{
-       nodejs 'nodejs' 
+    stage('package') {
+      steps {
+        echo 'this is the PACKAGE job'
+        sh 'npm run package'
+      }
     }
-    
-    stages{
-        stage('build'){
-            steps{
-                echo 'this is the BUILD job'
-                sh 'npm install'
-            }
-        }
-        stage('test'){
-            steps{
-                echo 'this is the TEST job'
-                sh 'npm test'
-            }
-        }
-        stage('package'){
-            steps{
-                echo 'this is the PACKAGE job'
-                sh 'npm run package'
-            }
-        }
+
+    stage('Archive') {
+      steps {
+        archiveArtifacts '**/distribution/*.zip'
+      }
     }
-    
-    post{
-        always{
-            echo 'this pipeline has completed...'
-        }
-        
+
+  }
+  tools {
+    nodejs 'nodejs'
+  }
+  post {
+    always {
+      echo 'this pipeline has completed...'
     }
-    
+
+  }
 }
